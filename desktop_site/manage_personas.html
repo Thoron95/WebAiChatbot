@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Personas{% endblock %}
+
+
+{% block body %}
+    <div class="container mt-3 rounded bg-transparent">
+        <div class="row justify-content-center rounded">
+            <div class="col-md-10">
+                <div class="container bg-dark rounded py-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('add_persona') }}" class="btn btn-outline-primary">Add Persona</a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <!-- Any additional content on the right side of the container can be placed here -->
+                        </div>
+                    </div>
+                    <ul class="list-group mt-3">
+                        {% for persona in personas.existing_personas %}
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ url_for('static', filename=personas.avatars[persona]) }}" alt="Persona Image" class="rounded-circle" width="50" height="50">
+                                <span class="ml-3">{{ persona }}</span>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('modify_persona', persona=persona) }}" class="btn btn-outline-secondary mr-2">Modify</a>
+                                <a href="{{ url_for('remove_persona', persona=persona) }}" class="btn btn-outline-danger">Remove</a>
+                            </div>
+                        </li>
+						{% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}CyberPony Command Centre{% endblock %}
+
+{% block body %}
+
+  <!-- Chat and Contacts -->
+  <div class="row justify-content-center">
+      <!-- Chat field -->
+      <div class="col-lg-8 bg-dark rounded">
+          <div class="card mb-3 bg-secondary" style="margin-top: 5%;">
+              <div class="card-header">{{ personas.active_persona["name"] }}</div>
+              <div class="card-body bg-dark" id="chatbox_body" style="overflow-y: scroll; height: calc(100vh - 180px);">
+                  <!-- Chat messages -->
+                  {% for cell in personas.active_persona["archive"] %}
+                    {% if cell["role"] == "user" %}
+                        <div class="rounded p-2 mb-3 bg-secondary bg-gradient" style="max-width: 100%; margin-right: 10%;">
+                            <div><strong>{{ personas.user }}:</strong> {{ cell["content"] }}</div>
+                        </div>
+                    {% endif %}
+                    {% if cell["role"] == "assistant" %}
+                        <div class="rounded p-2 mb-3 bg-dark bg-gradient" style="color: #fff; max-width: 100%; margin-left: 10%;">
+                            <div><strong>{{ personas.active_persona["name"] }}:</strong> {{ cell["content"] }}</div>
+                        </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for cell in personas.active_persona["conversation"] %}
+                    {% if cell["role"] == "user" %}
+                        <div class="rounded p-2 mb-3 bg-light bg-gradient" style="max-width: 100%; margin-right: 10%;">
+                            <div><strong>{{ personas.user }}:</strong> {{ cell["content"] }}</div>
+                        </div>
+                    {% endif %}
+                    {% if cell["role"] == "assistant" %}
+                        <div class="rounded p-2 mb-3 bg-primary bg-gradient" style="color: #fff; max-width: 100%; margin-left: 10%;">
+                            <div><strong>{{ personas.active_persona["name"] }}:</strong> {{ cell["content"] }}</div>
+                        </div>
+                    {% endif %}
+                  {% endfor %}
+              </div>
+              <div class="card-footer">
+                  <form id="chatbot" action="{{ url_for('chat', active_persona=personas.active_persona['name']) }}" method="POST">
+                      <div class="form-row">
+                          <div class="col">
+                              <input type="text" class="form-control" placeholder="Type your message..."
+                              name="prompt" id="prompt">
+                          </div>
+                          <div class="col-auto">
+                              <button type="submit" class="btn btn-primary">Send</button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+      <script>
+        // scroll the chatbox window to the bottom
+        var chatboxWindow = document.getElementById("chatbox_body");
+        chatboxWindow.scrollTop = chatboxWindow.scrollHeight;
+      </script>
+
+      <!-- Contacts area -->
+      <div class="col-md-3 bg-dark rounded">
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <div class="p-3">
+              <img src="{{ url_for('static', filename=personas.active_persona['avatar']) }}" class="img-fluid rounded-circle border border-dark" alt="Profile Image" width="300" height="300"/>
+            </div>
+            <div class="p-3">
+              <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Switch Persona
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      {% for persona in personas.existing_personas %}
+                        <a class="dropdown-item" href="{{ url_for('chat', active_persona=persona) }}">{{persona}}</a>
+                      {% endfor %}
+                  </div>
+                </div>
+            </div>
+            <div>
+              <a href="{{ url_for('manage_personas') }}" class="btn btn-secondary btn-block">Manage Personas</a>
+            </div>
+          </div>
+      </div>
+  </div>
+
+
+
+{% endblock %}
